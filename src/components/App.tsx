@@ -158,6 +158,12 @@ const Container = styled.div`
   height: 100vh;
   column-fill: auto;
 `;
+const VerseLine = styled.div`
+  color: blue;
+  font-weight: 900;
+  margin: 5px 0px 0 0;
+  font-size: 15px;
+`;
 const ChordLine = styled.div`
   color: red;
   font-weight: 900;
@@ -175,17 +181,16 @@ const Heading = styled.div`
 `;
 
 const processText = (text: string) => {
-  const lines = text.split("\n");
-  const processedLines = lines.map((line) => {
-    const trimmedLine = line.trim();
-    if (trimmedLine.startsWith("[") && trimmedLine.endsWith("]")) {
-      return <Heading>{trimmedLine}</Heading>;
-    }
-    if ((trimmedLine.match(/  /g) || []).length > 3) {
-      return <ChordLine>{trimmedLine.replaceAll(" ", "\u00A0")}</ChordLine>;
-    } else return <TextLine>{trimmedLine}</TextLine>;
+  let results: Array<React.ReactNode> = [];
+  text = text.replace(/\[([A-Z][a-z#]{0,5}[0-9]?)\]/g, "<em>[$1]</em>");
+
+  text.split("\n").forEach((r) => {
+    if (/^(\s*[A-Z][a-zA-Z\/#*]{0,10}[0-9]?|\s*-)+\s*$/.test(r))
+      results.push(<ChordLine>{r}</ChordLine>);
+    else results.push(<TextLine>{r}</TextLine>);
   });
-  return processedLines;
+
+  return results;
 };
 
 function App() {
